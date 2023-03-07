@@ -13,19 +13,19 @@ extern bootloader_register_struct bootloader_registers;
 extern change_boot_register_struct change_boot_registers;
 
 
-uint16_t packet_crc;
-uint32_t calculating_packet_crc;
-uint8_t buffer_packet_data[256];
-uint32_t address_to_read_write;
-uint32_t data_to_write;
+//uint16_t packet_crc;
+//uint32_t calculating_packet_crc;
+//uint8_t buffer_packet_data[256];
+//uint32_t address_to_read_write;
+//uint32_t data_to_write;
 uint32_t sector_error;
 
 FLASH_EraseInitTypeDef erase_init;
 
 
 
-extern SPI_HandleTypeDef hspi2;
-extern UART_HandleTypeDef huart3;
+//extern SPI_HandleTypeDef hspi2;
+//extern UART_HandleTypeDef huart3;
 
 uint32_t change_boot_calculating_firmware_crc1;
 uint32_t change_boot_calculating_firmware_crc2;
@@ -63,10 +63,8 @@ void ThreadMainTask(void const * argument)
 
 
 
-
 	for(;;)
 	{
-
 
 		switch(control_registers.reset_control_reg) // удаленная перезагрузка контроллера
 		{
@@ -89,6 +87,7 @@ void ThreadMainTask(void const * argument)
 			break;
 		}
 
+
 		switch(change_boot_registers.change_boot_write_reg)
 		{
 			case(1):
@@ -104,6 +103,20 @@ void ThreadMainTask(void const * argument)
 				change_boot_firmeware_crc = (((change_boot_registers.change_boot_crc_low_reg)<<8)&0xFF00) | ((change_boot_registers.change_boot_crc_high_reg)&0x00FF); // контрольная сумма загрузчика
 
 				change_boot_calculating_firmware_crc1 = CRC16((unsigned char*)change_boot_start_address, change_boot_firmware_lenght); // расчитываем контрольную сумму загрузчика
+
+				/*
+				change_boot_address_to_write = 0x08000000; // адрес куда писать загрузчик, вписать сюда
+
+				change_boot_start_address = 0x08020000; // стартовый адрес загрузчика, вписать сюда
+
+				change_boot_end_address = 0x0802FEEF; // конечный адрес загрузчика, вписать сюда
+
+				change_boot_firmware_lenght = change_boot_end_address - change_boot_start_address + 1; // длина прошивки загрузчика
+
+				change_boot_firmeware_crc = 0x1BDE; // контрольная сумма загрузчика, вписать сюда
+
+				change_boot_calculating_firmware_crc1 = CRC16((unsigned char*)change_boot_start_address, change_boot_firmware_lenght); // расчитываем контрольную сумму загрузчика
+				*/
 
 				if( change_boot_calculating_firmware_crc1 == change_boot_firmeware_crc ) // если контрольная сумма загрузчика сходится
 				{

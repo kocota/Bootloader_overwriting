@@ -101,6 +101,20 @@ uint16_t firmeware_crc;
 
 uint32_t start_default_task_delay = 1000;
 
+
+uint8_t temp_id_high;
+uint8_t temp_id_low;
+
+uint8_t temp_ip1;
+uint8_t temp_ip2;
+uint8_t temp_ip3;
+uint8_t temp_ip4;
+
+uint8_t temp_port_high;
+uint8_t temp_port_low;
+
+extern control_register_struct control_registers;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -189,6 +203,50 @@ int main(void)
   BUZ_ON(); // пикаем бузером
   HAL_Delay(50);
   BUZ_OFF();
+
+
+	fm25v02_read(4267, &temp_id_high);
+	fm25v02_read(4268, &temp_id_low);
+
+	fm25v02_read(4271, &temp_ip1);
+	fm25v02_read(4272, &temp_ip2);
+	fm25v02_read(4273, &temp_ip3);
+	fm25v02_read(4274, &temp_ip4);
+
+	fm25v02_read(4275, &temp_port_high);
+	fm25v02_read(4276, &temp_port_low);
+
+	fm25v02_write(2*ID_HIGH_REG, 0);
+	fm25v02_write(2*ID_HIGH_REG+1, temp_id_high);
+	control_registers.id_high_reg = temp_id_high;
+
+	fm25v02_write(2*ID_LOW_REG, 0);
+	fm25v02_write(2*ID_LOW_REG+1, temp_id_low);
+	control_registers.id_low_reg = temp_id_low;
+
+	fm25v02_write(2*IP_1_REG, 0);
+	fm25v02_write(2*IP_1_REG+1, temp_ip1);
+	control_registers.ip1_reg = temp_ip1;
+
+	fm25v02_write(2*IP_2_REG, 0);
+	fm25v02_write(2*IP_2_REG+1, temp_ip2);
+	control_registers.ip2_reg = temp_ip2;
+
+	fm25v02_write(2*IP_3_REG, 0);
+	fm25v02_write(2*IP_3_REG+1, temp_ip3);
+	control_registers.ip3_reg = temp_ip3;
+
+	fm25v02_write(2*IP_4_REG, 0);
+	fm25v02_write(2*IP_4_REG+1, temp_ip4);
+	control_registers.ip4_reg = temp_ip4;
+
+	fm25v02_write(2*PORT_HIGH_REG, 0);
+	fm25v02_write(2*PORT_HIGH_REG+1, temp_port_high);
+	control_registers.port_high_reg = temp_port_high;
+
+	fm25v02_write(2*PORT_LOW_REG, 0);
+	fm25v02_write(2*PORT_LOW_REG+1, temp_port_low);
+	control_registers.port_low_reg = temp_port_low;
 
 
 
