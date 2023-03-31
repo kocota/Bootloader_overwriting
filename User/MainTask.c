@@ -4,13 +4,17 @@
 #include "cmsis_os.h"
 #include "gpio.h"
 #include "fm25v02.h"
+#include "m95.h"
 
 
+extern osThreadId M95TaskHandle;
 extern osThreadId MainTaskHandle;
 extern osMutexId Fm25v02MutexHandle;
 extern control_register_struct control_registers;
 extern bootloader_register_struct bootloader_registers;
 extern change_boot_register_struct change_boot_registers;
+
+extern volatile uint8_t modem_reset_state;
 
 
 //uint16_t packet_crc;
@@ -249,7 +253,16 @@ void ThreadMainTask(void const * argument)
 			break;
 		}
 
-
+		if( modem_reset_state == 1)
+		{
+			osMutexWait(Fm25v02MutexHandle, osWaitForever); // ждем освобождение мьютекса записи в память
+			osThreadSuspend(M95TaskHandle);
+			modem_reset_state = 0;
+			//AT_QPOWD(0);
+			m95_power_off();
+			HAL_Delay(5000);
+			NVIC_SystemReset();
+		}
 
 
 

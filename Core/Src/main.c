@@ -115,6 +115,8 @@ uint8_t temp_port_low;
 
 extern control_register_struct control_registers;
 
+volatile uint8_t modem_reset_state = 0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -401,10 +403,10 @@ static void MX_IWDG_Init(void)
   hiwdg.Instance = IWDG;
   hiwdg.Init.Prescaler = IWDG_PRESCALER_32;
   hiwdg.Init.Reload = 4000;
-  //if (HAL_IWDG_Init(&hiwdg) != HAL_OK)
-  //{
-    //Error_Handler();
-  //}
+  if (HAL_IWDG_Init(&hiwdg) != HAL_OK)
+  {
+    Error_Handler();
+  }
   /* USER CODE BEGIN IWDG_Init 2 */
 
   /* USER CODE END IWDG_Init 2 */
@@ -657,7 +659,7 @@ void Callback_AT_Timer(void const * argument)
 
 void Callback_Ring_Center_Timer(void const * argument)
 {
-	NVIC_SystemReset();
+	modem_reset_state = 1;
 }
 
 /* USER CODE END 4 */
@@ -676,7 +678,7 @@ void StartDefaultTask(void const * argument)
   for(;;)
   {
 
-	//HAL_IWDG_Refresh(&hiwdg);
+	HAL_IWDG_Refresh(&hiwdg);
 	LED_VD3_TOGGLE();
 
 	osDelay(start_default_task_delay);
